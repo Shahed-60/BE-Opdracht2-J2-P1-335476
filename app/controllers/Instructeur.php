@@ -114,7 +114,7 @@ class Instructeur extends BaseController
                 <a href='" . URLROOT . "/instructeur/updateVoertuig/$voertuig->Id/$instructeurId'>
                                     <img src = '/public/img/b_edit.png'>
                                     </a> 
-               </td>
+            //    </td>
                <td>
                <a href='" . URLROOT . "/instructeur/unassignInstructeur/$voertuig->Id/$instructeurId'>
                <img src = '/public/img/b_drop.png'>
