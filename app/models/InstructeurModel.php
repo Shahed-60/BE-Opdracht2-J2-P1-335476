@@ -190,14 +190,32 @@ class InstructeurModel
         $this->db->bind(':instructeurId', $instructeurId);
         return $this->db->resultSet();
     }
-    function deleteVoertuig($voertuigId, $instructeurId)
+    function getVoertuigInstructeur($id)
     {
-        $sql = "DELETE FROM VoertuigInstructeur 
-                WHERE InstructeurId = $instructeurId And VoertuigId = $voertuigId";
+        $sql = "SELECT instructeurid as Id FROM voertuigInstructeur
+        where voertuigid = ?";
+
+        $this->db->query($sql);
+        $this->db->bind(1, $id);
+        return $this->db->single();
+    }
+
+    function unassignInstructeur($voertuigId, $instructeurId)
+    {
+        $sql = "DELETE FROM VoertuigInstructeur WHERE InstructeurId = $instructeurId AND VoertuigId = $voertuigId";
+
         $this->db->query($sql);
         return $this->db->resultSet();
     }
-    // i
+
+    function deleteVoertuig($voertuigId)
+    {
+        $sql = "DELETE FROM Voertuig WHERE Id = $voertuigId";
+
+        $this->db->query($sql);
+        return $this->db->resultSet();
+    }
+
     function getAllVehicles()
     {
         $sql = "SELECT v.Id, tv.TypeVoertuig, v.Type, v.Kenteken, v.Bouwjaar, v.Brandstof, tv.Rijbewijscategorie,
