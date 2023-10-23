@@ -10,7 +10,7 @@
 
 <body>
     <h3><u><?= $data['title']; ?></u></h3>
-
+    ssssssssssssssssssssssssssssssssssssssss
     <table>
         <thead>
             <th>Type Voertuig</th>
@@ -26,7 +26,7 @@
             <?= $data['tableRows']; ?>
         </tbody>
     </table>
-    ssssssssssssssssssssssssssssssssssssssss
+
     <?php if (isset($data['deleteMessage'])) : ?>
         <div><?= $data['deleteMessage']; ?></div>
     <?php endif ?>
