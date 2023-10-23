@@ -17,7 +17,7 @@ td {
 
 div {
     text-align: center;
-    color: red;
+    /* color: red; */
     border-style: solid;
     padding: .5rem;
     width: 28rem;
