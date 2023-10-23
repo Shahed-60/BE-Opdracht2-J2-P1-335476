@@ -10,7 +10,6 @@
 
 <body>
     <h3><u><?= $data['title']; ?></u></h3>
-    ssssssssssssssssssssssssssssssssssssssss
     <table>
         <thead>
             <th>Type Voertuig</th>
