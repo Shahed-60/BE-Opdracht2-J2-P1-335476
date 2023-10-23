@@ -12,6 +12,7 @@ class Instructeur extends BaseController
     public function overzichtInstructeur()
     {
         $result = $this->instructeurModel->getInstructeurs();
+        $allVehicles = "<a href='" . URLROOT . "/instructeur/alleVoertuigen'/>alle voertuigen</a>";
 
         //  var_dump($result);
         $rows = "";
@@ -52,7 +53,9 @@ class Instructeur extends BaseController
         $data = [
             'title' => 'Instructeurs in dienst',
             'aantalInstructeurs' => $aantalInstructeurs,
-            'rows' => $rows
+            'rows' => $rows,
+            'allVehicles' => $allVehicles
+
         ];
 
         $this->view('Instructeur/overzichtinstructeur', $data);
@@ -112,6 +115,11 @@ class Instructeur extends BaseController
                                     <img src = '/public/img/b_edit.png'>
                                     </a> 
                </td>
+               <td>
+               <a href='" . URLROOT . "/instructeur/unassignInstructeur/$voertuig->Id/$instructeurId'>
+               <img src = '/public/img/b_drop.png'>
+               </a> 
+               </td>  
 
                 
         </tr>";
@@ -125,13 +133,18 @@ class Instructeur extends BaseController
             'naam'      => $naam,
             'datumInDienst' => $datumInDienst,
             'aantalSterren' => $aantalSterren,
-            'toevoegen' => $toevoegen
+            'toevoegen' => $toevoegen,
+            'deleteMessage' => isset($GLOBALS['deleted']) ? 'Het door u geselecteerde voertuig is verwijderd' : null,
         ];
+
+        if (isset($GLOBALS['deleted'])) {
+            header('Refresh:3; url=/Instructeur/overzichtVoertuigen/' . $instructeurId);
+        }
 
         $this->view('Instructeur/overzichtVoertuigen', $data);
     }
 
-   
+
     // aan scenario 2 werken
     // function updateInstructeur($Id)
     // {
@@ -197,7 +210,13 @@ class Instructeur extends BaseController
                                     <img src = '/public/img/b_edit.png'>
                                     </a> 
                                     </td>
+                                    
 
+                                    <td>
+                                    <a href='" . URLROOT . "/instructeur/deleteVoertuig/$instructeurId/$voertuig->Id'>
+                                   <img src = '/public/img/b_drop.png'>
+                                   </a> 
+                                   </td>
                                     
                             </tr>";
             }
@@ -210,9 +229,13 @@ class Instructeur extends BaseController
             'tableRows' => $tableRows,
             'naam'      => $naam,
             'datumInDienst' => $datumInDienst,
-            'aantalSterren' => $aantalSterren
-        ];
+            'aantalSterren' => $aantalSterren,
+            'deleteMessage' => isset($GLOBALS['deleted']) ? 'Het door u geselecteerde voertuig is verwijderd' : null,
 
+        ];
+        if (isset($GLOBALS['deleted'])) {
+            header('Refresh:3; url=/Instructeur/overzichtNietToegewezenVoertuigen/' . $instructeurId);
+        }
 
 
         $this->view('Instructeur/overzichtNietToegewezenVoertuig', $data);
@@ -249,10 +272,89 @@ class Instructeur extends BaseController
 
         $this->view('Instructeur/UpdateVoertuig', $data);
     }
-    function toevoegenInstructeur($instructeurId,$voertuigId) {
+    function toevoegenInstructeur($instructeurId, $voertuigId)
+    {
 
         $this->instructeurModel->addVoertuigToInstructeur($voertuigId, $instructeurId);
 
         $this->overzichtVoertuigen($instructeurId);
+    }
+    function unassignInstructeur($voertuigId, $instructeurId)
+    {
+        $this->instructeurModel->unassignInstructeur($voertuigId, $instructeurId);
+
+        $GLOBALS['deleted'] = true;
+
+        $this->overzichtVoertuigen($instructeurId);
+    }
+
+    function deleteVoertuig($instructeurId, $voertuigId)
+    {
+        $this->instructeurModel->deleteVoertuig($voertuigId);
+
+        $GLOBALS['deleted'] = true;
+
+        $this->overzichtNietToegewezenVoertuigen($instructeurId);
+    }
+
+
+
+    function alleVoertuigen()
+    {
+        $alleVoertuigen = $this->instructeurModel->getAllVehicles();
+
+
+        $tableRows = "";
+        if (empty($alleVoertuigen)) {
+
+            $tableRows = "<tr>
+                            <td colspan='6'>
+                                <div>Er zijn geen voertuigen beschikbaar op dit moment</div>
+                            </td>
+                          </tr>";
+        } else {
+
+            foreach ($alleVoertuigen as $voertuig) {
+
+
+                $date_formatted = date_format(date_create($voertuig->Bouwjaar), 'd-m-Y');
+
+                $tableRows .= "<tr>
+                                    <td>$voertuig->TypeVoertuig</td>
+                                    <td>$voertuig->Type</td>
+                                    <td>$voertuig->Kenteken</td>
+                                    <td>$date_formatted</td>
+                                    <td>$voertuig->Brandstof</td>
+                                    <td>$voertuig->Rijbewijscategorie</td>    
+                                    <td>$voertuig->InstructeurNaam</td>  
+                                    <td>
+                                    <a href='" . URLROOT . "/instructeur/deleteVoertuigFromAll/$voertuig->Id'>
+                                   <img src = '/public/img/b_drop.png'>
+                                   </a> 
+                                   </td> 
+                            </tr>";
+            }
+        }
+
+        $data = [
+            'tableRows' => $tableRows,
+            'title' => 'Alle voertuigen'
+        ];
+
+        $this->view('Instructeur/alleVoertuigen', $data);
+    }
+
+    function deleteVoertuigFromAll($voertuigId)
+    {
+        $this->instructeurModel->deleteVoertuigfromAll($voertuigId);
+
+        $this->view('Instructeur/deleteMessage');
+
+        header('Refresh:3; url=/Instructeur/alleVoertuigen');
+    }
+
+    function deleteMessage()
+    {
+        $this->view('Instructeur/deleteMessage');
     }
 }

@@ -13,6 +13,8 @@
 <body>
 
     <h3><u><?= $data['title']; ?></u></h3>
+    <!-- <?= var_dump($data['deleteMessage']); ?> -->
+
 
     <table>
         <tbody>
@@ -31,6 +33,10 @@
         </tbody>
     </table>
     <?= $data['toevoegen']; ?>
+    <?php if (isset($data['deleteMessage'])) : ?>
+        <div><?= $data['deleteMessage']; ?></div>
+
+    <?php endif ?>
     <table>
         <thead>
             <th>Id</th>
@@ -41,6 +47,8 @@
             <th>Brandstof</th>
             <th>RijbewijsCategorie</th>
             <th>wijzigen</th>
+            <th>Verwijderen</th>
+
 
         </thead>
         <tbody>
